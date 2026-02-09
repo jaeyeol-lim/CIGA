@@ -39,4 +39,5 @@ class DrugOOD(InMemoryDataset):
                 data_list.append(new_data)
             torch.save(self.collate(data_list), data_path)
 
-        self.data, self.slices = torch.load(data_path)
+        # weights_only=False
+        self.data, self.slices = torch.load(data_path, weights_only=False)
