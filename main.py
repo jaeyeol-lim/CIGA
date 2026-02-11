@@ -573,7 +573,8 @@ def main():
             all_info['test_acc'].append(last_test_acc)
             all_info['train_acc'].append(last_train_acc)
             all_info['val_acc'].append(last_val_acc)
-
+            
+            # 학습 도중 log: val <-> test 바뀌어 찍히는 오류 존재
             print("      [{:3d}/{:d}]".format(epoch, args.epoch) +
                         "\n       train_ACC: {:.4f} / {:.4f}"
                         "\n       valid_ACC: {:.4f} / {:.4f}"
