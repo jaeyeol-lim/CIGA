@@ -85,10 +85,63 @@ and apply the weights to `spu_pred_loss`.
 ### Installation and data preparation
 Our code is based on the following libraries:
 
-```
-torch==1.9.0
-torch-geometric==1.7.2
-scikit-image==0.19.1 
+```bash
+# Docker
+docker run -it --gpus all --name ciga -v /home/jylim/project:/workspace --security-opt seccomp=unconfined pytorch/pytorch:2.8.0-cuda12.8-cudnn9-runtime
+
+# Apt-get
+printf 'APT::Sandbox::User "root";\nAPT::Sandbox::Seccomp "false";\n' > /etc/apt/apt.conf.d/99no-sandbox
+
+# Conda
+conda init bash
+exec bash
+
+apt-get update && apt-get install -y git
+
+git clone https://github.com/limlimlim00/CIGA.git
+cd CIGA
+
+conda create -n ciga310 python=3.10
+conda activate ciga310
+
+pip install torch==2.8.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
+
+# PyG core + CUDA extension
+pip install torch-geometric
+pip install "scipy<2"
+pip install --no-index \
+  --find-links https://data.pyg.org/whl/torch-2.8.0+cu128.html \
+  pyg-lib torch-scatter torch-sparse torch-cluster torch-spline-conv
+
+pip install numpy ogb matplotlib higher termcolor pymetis \
+  dgl pydantic dgllife rdkit wilds transformers torchviz torchmetrics \
+  munch ruamel.yaml typed-argument-parser cilog tensorboard gdown \
+  dive-into-graphs pynvml seaborn
+
+apt-get update && apt-get install -y \
+  libxcb1 \
+  libx11-6 \
+  libxrender1 \
+  libxext6 \
+  libglib2.0-0 \
+  libgl1 \
+  libglx-mesa0 \
+  libegl1
+  
+pip install -U "pip==26.0" "setuptools==80.10.2" wheel
+pip install --no-build-isolation "mmcv==1.5.0"
+
+# torchdata 에러 -> 버전 변경
+pip uninstall torchdata
+pip install "torchdata==0.7.1"
+
+# graphbolt 에러 -> 안 쓰므로 꺼두기 (열고 load_graphbolt() try except로 감싸기)
+apt-get update && apt-get install -y vim
+vim /opt/conda/envs/ciga310/lib/python3.10/site-packages/dgl/graphbolt/__init__.py
+
+# 추가 패키지
+pip install -U "yapf==0.32.0"
+pip install texttable prettytable
 ```
 
 plus the [DrugOOD](https://github.com/tencent-ailab/DrugOOD) benchmark repo.
