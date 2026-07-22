@@ -153,6 +153,8 @@ We provide the hyperparamter tuning and evaluation details in the paper and appe
 In the below we give a brief introduction of the commands and their usage in our code. 
 We provide the corresponding running scripts in the [script](./scripts/) folder.
 
+DrugOOD IC50 공통 규약을 적용한 단일 실행 및 5×5 탐색 코드는 [`DrugOOD/README.md`](DrugOOD/README.md)를 참고한다.
+
 To obtain results of ERM, simply run 
 ```
 python main.py --erm
