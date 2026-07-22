@@ -102,7 +102,7 @@ def main():
     parser.add_argument('--feature', type=str, default="full", help='full feature or simple feature')
 
     # training config
-    parser.add_argument('--batch_size', default=32, type=int, help='batch size')
+    parser.add_argument('--batch_size', default=128, type=int, help='batch size')
     parser.add_argument('--epoch', default=400, type=int, help='training iterations')
     parser.add_argument('--lr', default=1e-3, type=float, help='learning rate for the predictor')
     parser.add_argument('--seed', nargs='?', default='[1,2,3,4,5]', help='random seed')

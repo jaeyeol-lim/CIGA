@@ -39,6 +39,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--domain", choices=tuple(DOMAIN_DEFAULTS), default="assay")
     parser.add_argument("--subset", choices=("core", "general", "refined"), default="core")
+    parser.add_argument("--endpoint", choices=("ic50", "ec50"), default="ic50")
     parser.add_argument("--data-root", type=Path, default=discover_data_root())
     parser.add_argument("--output-dir", type=Path, default=None)
     parser.add_argument("--device", default="auto")
@@ -46,7 +47,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--epochs", type=int, default=50)
     parser.add_argument("--erm-pretrain-epochs", type=int, default=10)
     parser.add_argument("--patience", type=int, default=10)
-    parser.add_argument("--batch-size", type=int, default=64)
+    parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--num-workers", type=int, default=4)
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--weight-decay", type=float, default=0.0)
@@ -240,7 +241,7 @@ def train_epoch(model, loader, device, optimizer, args) -> dict:
 def train(args: argparse.Namespace) -> dict:
     set_seed(args.seed)
     device = resolve_device(args.device)
-    stem, splits = load_splits(args.data_root, args.subset, args.domain)
+    stem, splits = load_splits(args.data_root, args.subset, args.domain, args.endpoint)
     train_loader = make_loader(splits["train"], args, True)
     eval_loaders = {name: make_loader(data, args, False) for name, data in splits.items() if name != "train"}
     sample = splits["train"][0]

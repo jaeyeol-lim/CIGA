@@ -5,7 +5,7 @@
 ## 적용 규약
 
 - Virtual Node 없는 4-layer GIN, hidden dimension 128, dropout 0.1, sum pooling
-- Adam, learning rate `1e-3`, batch size 64
+- Adam, learning rate `1e-3`, batch size 128
 - ERM pretraining 10 epochs 후 CIGA main training 최대 50 epochs
 - OOD validation accuracy 기준 early stopping patience 10
 - best validation checkpoint에서 test accuracy와 ROC-AUC 계산

@@ -32,6 +32,7 @@ def main() -> None:
     parser.add_argument("--domains", nargs="+", choices=("assay", "scaffold", "size"), default=["assay"])
     parser.add_argument("--seeds", nargs="+", type=int, default=[1, 2, 3, 4])
     parser.add_argument("--subset", choices=("core", "general", "refined"), default="core")
+    parser.add_argument("--endpoint", choices=("ic50", "ec50"), default="ic50")
     parser.add_argument("--data-root", type=Path, default=None)
     parser.add_argument("--output-root", type=Path, default=Path(__file__).resolve().parent / "sweeps")
     parser.add_argument("--device", default="auto")
@@ -50,11 +51,12 @@ def main() -> None:
     for domain, seed, contrastive, hinge in itertools.product(
         args.domains, args.seeds, args.contrastive_weights, args.hinge_weights
     ):
-        output_dir = args.output_root / domain / f"contrast_{value_name(contrastive)}_hinge_{value_name(hinge)}" / f"seed_{seed}"
+        output_dir = args.output_root / args.endpoint / domain / f"contrast_{value_name(contrastive)}_hinge_{value_name(hinge)}" / f"seed_{seed}"
         command = [
             sys.executable, str(script),
             "--domain", domain,
             "--subset", args.subset,
+            "--endpoint", args.endpoint,
             "--seed", str(seed),
             "--contrastive-weight", str(contrastive),
             "--hinge-weight", str(hinge),
@@ -91,7 +93,7 @@ def main() -> None:
         summary = json.loads((output_dir / "summary.json").read_text(encoding="utf-8"))
         grouped.setdefault((domain, contrastive, hinge), []).append(summary)
 
-    aggregate = {"method": "CIGA", "seeds": args.seeds, "groups": {}}
+    aggregate = {"method": "CIGA", "endpoint": args.endpoint, "seeds": args.seeds, "groups": {}}
     best = {}
     for (domain, contrastive, hinge), summaries in sorted(grouped.items()):
         key = f"{domain}/contrastive={contrastive:g}/hinge={hinge:g}"
@@ -106,7 +108,7 @@ def main() -> None:
         if mean is not None and (domain not in best or mean > best[domain][0]):
             best[domain] = (mean, key)
     aggregate["best_by_domain"] = {domain: key for domain, (_, key) in sorted(best.items())}
-    path = args.output_root / "aggregate.json"
+    path = args.output_root / args.endpoint / "aggregate.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(aggregate, indent=2), encoding="utf-8")
     print(f"aggregate={path}")
